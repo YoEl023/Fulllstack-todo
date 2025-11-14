@@ -1,0 +1,18 @@
+<div class="container">
+  <h1>My Tasks</h1>
+
+  <div *ngIf="tasks.length > 0; else noTasks">
+
+    <ul>
+      <li *ngFor="let task of tasks">
+        {{ task.taskName }}
+      </li>
+    </ul>
+
+  </div>
+
+  <ng-template #noTasks>
+    <p>You have no tasks yet. Add one!</p>
+  </ng-template>
+
+</div>

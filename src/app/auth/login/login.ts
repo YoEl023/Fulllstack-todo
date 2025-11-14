@@ -1,8 +1,9 @@
-
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; 
+import { Auth } from '../../services/auth';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,31 +28,40 @@ import { MatButtonModule } from '@angular/material/button';
 export class Login {
 
 
-  // Declare a property to hold our form group. The '!' tells TypeScript
-  // that we will definitely initialize this property in the constructor.
+  
   loginForm!: FormGroup;
 
-  // We inject the FormBuilder service in the constructor
-  constructor(private fb: FormBuilder) {}
-
-  // ngOnInit is a special "lifecycle hook" that runs once when the component is created.
-  // It's the perfect place to initialize our form.
+  
+ constructor(
+    private fb: FormBuilder,
+    private authService: Auth,
+    private router: Router
+  ) {}
+  
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      // Define the form controls. The first value is the default state (''),
-      // and the second is an array of validators.
+      
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      passwordHash: ['', Validators.required]
     });
   }
 
-  onLogin(): void {
+   onLogin(): void {
     if (this.loginForm.valid) {
-      console.log('Form Submitted!', this.loginForm.value);
-    } else {
-      console.log('Form is invalid');
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (response) => {
+          console.log('Login successful!', response);
+          
+          this.authService.saveToken(response);
+
+          
+          this.router.navigate(['/tasks']); 
+        },
+        error: (err) => {
+          console.error('Login failed:', err);
+
+        }
+      });
     }
   }
-
-
 }
