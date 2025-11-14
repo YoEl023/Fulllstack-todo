@@ -1,0 +1,34 @@
+<div class="login-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Login</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- 1. Bind the form element to our loginForm -->
+      <!-- 2. Call onLogin() when the form is submitted -->
+      <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+
+        <!-- Username Field -->
+        <mat-form-field appearance="fill">
+          <mat-label>Username</mat-label>
+          <!-- 3. Bind this input to the 'username' form control -->
+          <input matInput placeholder="Enter your username" formControlName="username">
+        </mat-form-field>
+
+        <!-- Password Field -->
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <!-- 4. Bind this input to the 'password' form control -->
+          <input matInput type="password" placeholder="Enter your password" formControlName="password">
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <!-- 5. Add type="submit" to the button and disable it if the form is invalid -->
+      <button mat-raised-button color="primary" class="login-button" type="submit" [disabled]="loginForm.invalid" (click)="onLogin()">Login</button>
+      <a routerLink="/register" class="register-link">Don't have an account? Register</a>
+    </mat-card-actions>
+  </mat-card>
+</div>
