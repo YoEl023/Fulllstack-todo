@@ -1,0 +1,15 @@
+.container {
+  padding: 24px;
+}
+
+.mat-table {
+  width: 100%;
+}
+
+.search-container {
+  margin-bottom: 24px;
+}
+
+.search-input {
+  width: 100%;
+}

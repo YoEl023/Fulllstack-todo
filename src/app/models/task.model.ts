@@ -4,5 +4,6 @@ export interface Task {
     taskName: string;
     isDeleted: boolean;
     userID: number;
-    statusID: number;
+    statusID: number;  
+    user?: { userName: string };
 }

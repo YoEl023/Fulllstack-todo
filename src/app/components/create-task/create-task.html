@@ -1,0 +1,10 @@
+<form [formGroup]="createTaskForm" (ngSubmit)="onSubmit()" class="create-task-form">
+  <mat-form-field appearance="outline" class="task-input">
+    <mat-label>New Task</mat-label>
+    <input matInput formControlName="taskName" placeholder="What needs to be done?">
+  </mat-form-field>
+
+  <button mat-flat-button color="primary" type="submit" [disabled]="createTaskForm.invalid">
+    Add Task
+  </button>
+</form>

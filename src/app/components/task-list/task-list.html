@@ -1,18 +1,166 @@
 <div class="container">
   <h1>My Tasks</h1>
 
-  <div *ngIf="tasks.length > 0; else noTasks">
 
-    <ul>
-      <li *ngFor="let task of tasks">
-        {{ task.taskName }}
-      </li>
-    </ul>
-
+   <div class="search-container">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Search Tasks</mat-label>
+      <input matInput 
+             placeholder="Enter task name to search..."
+             (keyup)="onSearch($event)">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
   </div>
+  
+  <app-create-task (taskCreated)="loadTasks()"></app-create-task>
 
-  <ng-template #noTasks>
-    <p>You have no tasks yet. Add one!</p>
-  </ng-template>
+  <mat-tab-group animationDuration="0ms">
 
+
+    <mat-tab label="To Do">
+      <ng-template matTabContent>
+        <div *ngIf="todoTasks.length === 0; else todoTable" class="empty-state">
+          <p>You have no tasks to do!</p>
+        </div>
+        <ng-template #todoTable>
+          <mat-table [dataSource]="todoTasks" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="sno">
+              <mat-header-cell *matHeaderCellDef> S.No </mat-header-cell>
+              <mat-cell *matCellDef="let task; let i = index"> {{ i + 1 }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="taskName">
+              <mat-header-cell *matHeaderCellDef> Task Name </mat-header-cell>
+              <mat-cell *matCellDef="let task"> {{ task.taskName }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="username">
+              <mat-header-cell *matHeaderCellDef> Assigned To </mat-header-cell>
+              <mat-cell *matCellDef="let task"> {{ task.user?.userName }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+              <mat-cell *matCellDef="let task"> To Do </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+              <mat-cell *matCellDef="let task">
+                <button mat-icon-button color="accent" (click)="markAsComplete(task.taskID)" aria-label="Mark task as complete">
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" (click)="openEditDialog(task)" aria-label="Edit task">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteTask(task.taskID)" aria-label="Delete task">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+        </ng-template>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Completed">
+      <ng-template matTabContent>
+        <div *ngIf="completedTasks.length === 0; else completedTable" class="empty-state">
+          <p>You have no completed tasks.</p>
+        </div>
+        <ng-template #completedTable>
+          <mat-table [dataSource]="completedTasks" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="sno">
+              <mat-header-cell *matHeaderCellDef> S.No </mat-header-cell>
+              <mat-cell *matCellDef="let task; let i = index"> {{ i + 1 }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="taskName">
+              <mat-header-cell *matHeaderCellDef> Task Name </mat-header-cell>
+              <mat-cell *matCellDef="let task"> {{ task.taskName }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="username">
+              <mat-header-cell *matHeaderCellDef> Assigned To </mat-header-cell>
+              <mat-cell *matCellDef="let task"> {{ task.user?.userName }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+              <mat-cell *matCellDef="let task"> Completed </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+              <mat-cell *matCellDef="let task">
+                <button mat-icon-button color="accent" (click)="revertToDo(task.taskID)" aria-label="Revert task to To Do">
+                  <mat-icon>undo</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteTask(task.taskID)" aria-label="Delete task">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+        </ng-template>
+      </ng-template>
+    </mat-tab>
+
+ 
+    <mat-tab label="Deleted" *ngIf="isAdminUser">
+      <ng-template matTabContent>
+        <div *ngIf="deletedTasks.length === 0; else deletedTable" class="empty-state">
+          <p>There are no deleted tasks.</p>
+        </div>
+        <ng-template #deletedTable>
+          <mat-table [dataSource]="deletedTasks" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="sno">
+              <mat-header-cell *matHeaderCellDef> S.No </mat-header-cell>
+              <mat-cell *matCellDef="let task; let i = index"> {{ i + 1 }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="taskName">
+              <mat-header-cell *matHeaderCellDef> Task Name </mat-header-cell>
+              <mat-cell *matCellDef="let task"> {{ task.taskName }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="username">
+              <mat-header-cell *matHeaderCellDef> Assigned To </mat-header-cell>
+              <mat-cell *matCellDef="let task"> {{ task.user?.userName }} </mat-cell>
+            </ng-container>
+            
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+              <mat-cell *matCellDef="let task">
+                <button mat-icon-button color="accent" (click)="restoreTask(task.taskID)" aria-label="Restore task">
+                  <mat-icon>restore_from_trash</mat-icon>
+                </button>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="deletedDisplayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: deletedDisplayedColumns;"></mat-row>
+          </mat-table>
+        </ng-template>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
 </div>
+
+<style>
+  .empty-state {
+    padding: 24px;
+    text-align: center;
+    color: grey;
+  }
+</style>
