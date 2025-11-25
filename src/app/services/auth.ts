@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject  } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 
@@ -10,8 +10,23 @@ import { jwtDecode } from 'jwt-decode';
 export class Auth {
   private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'auth_token';
+  private authToken: string | null = null;
 
-  constructor(private http: HttpClient) { }
+  private authState = new BehaviorSubject<boolean>(this.isLoggedIn());
+authState$ = this.authState.asObservable();
+
+
+
+  constructor(private http: HttpClient) { 
+        this.loadToken();
+   this.authState.next(this.isLoggedIn());
+
+
+  }
+
+    private loadToken(): void {
+    this.authToken = localStorage.getItem(this.tokenKey);
+  }
  
   login(userData: any): Observable<any> {
     const loginUrl = `${this.apiUrl}/login`;
@@ -23,14 +38,20 @@ export class Auth {
  
   saveToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
+        this.authToken = token;
+ this.authState.next(true);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return this.authToken;
   }
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+        this.authToken = null;
+          this.authState.next(false);
+
+
   }
 
     register(userData: any): Observable<any> {

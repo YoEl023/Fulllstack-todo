@@ -1,13 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Auth } from '../../services/auth';
-
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { NotificationService } from '../../services/notification';
+import { AuthForm } from '../../components/auth-form/auth-form'; 
 
 @Component({
   selector: 'app-register',
@@ -15,47 +11,30 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     CommonModule,
     RouterModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
+    AuthForm 
   ],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
-export class Register implements OnInit {
-  registerForm!: FormGroup;
+export class Register {
 
   constructor(
-    private fb: FormBuilder,
     private authService: Auth,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
-  ngOnInit(): void {
-    this.registerForm = this.fb.group({
-      userName: ['', Validators.required],
-      passwordHash: ['', Validators.required]
+  onRegister(formData: any): void {
+    this.authService.register(formData).subscribe({
+      next: (response) => {
+        this.notificationService.showSuccess('Registration successful! Please log in.');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        const errorMessage = err.error || 'Registration failed. Please try again.';
+        this.notificationService.showError(errorMessage);
+        console.error('Registration failed:', err);
+      }
     });
-  }
-
-  onRegister(): void {
-    if (this.registerForm.valid) {
-      console.log('Registering user:', this.registerForm.value);
-
-      this.authService.register(this.registerForm.value).subscribe({
-        next: (response) => {
-          console.log('Registration successful!', response);
-          
-          this.router.navigate(['/login']);
-
-        },
-        error: (err) => {
-          console.error('Registration failed:', err);
-        }
-      });
-
-    }
   }
 }

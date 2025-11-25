@@ -1,0 +1,9 @@
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.sortable span {
+  font-size: 0.75rem;
+  margin-left: 4px;
+}

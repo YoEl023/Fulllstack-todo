@@ -1,0 +1,224 @@
+
+<form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label for="username" class="form-label">Username</label>
+    <input type="text" class="form-control" id="username" formControlName="userName" maxlength="50">
+  </div>
+  <div class="mb-3">
+  <label for="password" class="form-label">Password</label>
+
+  <div class="input-group">
+    <input
+      [type]="showPassword ? 'text' : 'password'"
+      class="form-control"
+      id="password"
+      formControlName="passwordHash"
+      maxlength="50"
+    />
+
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="togglePassword()"
+      tabindex="-1"
+    >
+      {{ showPassword ? 'Hide' : 'Show' }}
+    </button>
+  </div>
+
+  <div *ngIf="authForm.get('passwordHash')?.hasError('minlength')" class="form-text text-danger">
+    Password must be at least 6 characters.
+  </div>
+  <div *ngIf="authForm.get('passwordHash')?.hasError('pattern')" class="form-text text-danger">
+    Password cannot start/end with spaces   
+  </div>
+</div>
+
+
+  <!-- <ng-container *ngIf="formType === 'Register'">
+   <div class="mb-3">
+  <label for="confirmPassword" class="form-label">Confirm Password</label>
+
+  <div class="input-group">
+    <input
+      [type]="showConfirmPassword ? 'text' : 'password'"
+      class="form-control"
+      id="confirmPassword"
+      formControlName="confirmPassword"
+      maxlength="50"
+    />
+
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="toggleConfirmPassword()"
+      tabindex="-1"
+    >
+      {{ showConfirmPassword ? 'Hide' : 'Show' }}
+    </button>
+  </div>
+</div>
+
+    <div *ngIf="authForm.hasError('passwordMismatch') && authForm.get('confirmPassword')?.touched" class="form-text text-danger mb-2">
+      Passwords do not match.
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" formControlName="email">
+      <div *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched" class="form-text text-danger">
+    <div *ngIf="authForm.get('email')?.hasError('required')">
+      Email is required.
+    </div>
+    <div *ngIf="authForm.get('email')?.hasError('pattern')">
+      Please enter a valid email address ending in .com.
+    </div>
+  </div>
+</div>
+   
+    
+    <div class="mb-3">
+      <label for="contactNumber" class="form-label">Contact Number (Optional)</label>
+      <input type="number" class="form-control" id="contactNumber" formControlName="contactNumber" maxlength="10" >
+       <div *ngIf="authForm.get('contactNumber')?.hasError('pattern')" class="form-text text-danger">
+        Must be a 10-digit number.
+      </div>
+    </div>
+
+     <div class="mb-3">
+    <label for="dob" class="form-label">Date of Birth (Optional)</label>
+    <input type="text"
+           class="form-control"
+           id="dob"
+           placeholder="Select your date of birth"
+           bsDatepicker
+           [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', containerClass: 'theme-blue' }"
+           formControlName="dateOfBirth">
+  </div>
+
+     <div class="mb-3">
+        <label for="gender" class="form-label">Gender (Optional)</label>
+        <select id="gender" class="form-select" formControlName="gender">
+          <option value="">-- Select --</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+     </div>
+
+     <div class="mb-3">
+       <label for="address" class="form-label">Address (Optional)</label>
+       <textarea id="address" class="form-control" formControlName="address" rows="3"  maxlength="250"></textarea>
+
+        <div class="form-text text-end">
+    {{ authForm.get('address')?.value?.length || 0 }} / 250
+      </div>
+     </div>
+  </ng-container>
+
+  <div class="d-grid">
+    <button type="submit" class="btn btn-primary" [disabled]="authForm.invalid">
+      {{ formType }}
+    </button>
+  </div>
+</form> -->
+
+<ng-container *ngIf="formType === 'Register'">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <div class="input-group">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            class="form-control"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            maxlength="50"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="toggleConfirmPassword()"
+            tabindex="-1"
+          >
+            {{ showConfirmPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+      </div>
+      <div *ngIf="authForm.hasError('passwordMismatch') && authForm.get('confirmPassword')?.touched" class="form-text text-danger mb-2">
+        Passwords do not match.
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" formControlName="email">
+        <div *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched" class="form-text text-danger">
+          <div *ngIf="authForm.get('email')?.hasError('required')">
+            Email is required.
+          </div>
+          <div *ngIf="authForm.get('email')?.hasError('pattern')">
+            Please enter a valid email address ending in .com.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="contactNumber" class="form-label">Contact Number (Optional)</label>
+        <input
+          type="number"
+          class="form-control"
+          id="contactNumber"
+          formControlName="contactNumber"
+          maxlength="10"
+        >
+        <div *ngIf="authForm.get('contactNumber')?.hasError('pattern')" class="form-text text-danger">
+          Must be a 10-digit number.
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="dob" class="form-label">Date of Birth (Optional)</label>
+        <input
+          type="text"
+          class="form-control"
+          id="dob"
+          placeholder="Select your date of birth"
+          bsDatepicker
+          [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', containerClass: 'theme-blue' }"
+          formControlName="dateOfBirth"
+        >
+      </div>
+
+      <div class="mb-3">
+        <label for="gender" class="form-label">Gender (Optional)</label>
+        <select id="gender" class="form-select" formControlName="gender">
+          <option value="">-- Select --</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="address" class="form-label">Address (Optional)</label>
+        <textarea
+          id="address"
+          class="form-control"
+          formControlName="address"
+          rows="3"
+          maxlength="250"
+        ></textarea>
+        <div class="form-text text-end">
+          {{ authForm.get('address')?.value?.length || 0 }} / 250
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+  <div class="d-grid">
+    <button type="submit" class="btn btn-primary" [disabled]="authForm.invalid">
+      {{ formType }}
+    </button>
+  </div>

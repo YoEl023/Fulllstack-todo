@@ -1,14 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; 
+import { RouterModule, Router } from '@angular/router';
 import { Auth } from '../../services/auth';
-
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { NotificationService } from '../../services/notification';
+import { AuthForm } from '../../components/auth-form/auth-form';
 
 @Component({
   selector: 'app-login',
@@ -16,52 +11,30 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     CommonModule,
     RouterModule, 
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
+    AuthForm
   ],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class Login {
 
-
-  
-  loginForm!: FormGroup;
-
-  
- constructor(
-    private fb: FormBuilder,
+  constructor(
     private authService: Auth,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService 
   ) {}
   
-  ngOnInit(): void {
-    this.loginForm = this.fb.group({
-      
-      username: ['', Validators.required],
-      passwordHash: ['', Validators.required]
+  onLogin(formData: any): void {
+    this.authService.login(formData).subscribe({
+      next: (response) => {
+        this.notificationService.showSuccess('Login successful!');
+        this.authService.saveToken(response);
+        this.router.navigate(['/tasks']); 
+      },
+      error: (err) => {
+        const errorMessage = err.error || 'Invalid username or password.';
+        this.notificationService.showError(errorMessage);
+      }
     });
-  }
-
-   onLogin(): void {
-    if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value).subscribe({
-        next: (response) => {
-          console.log('Login successful!', response);
-          
-          this.authService.saveToken(response);
-
-          
-          this.router.navigate(['/tasks']); 
-        },
-        error: (err) => {
-          console.error('Login failed:', err);
-
-        }
-      });
-    }
   }
 }

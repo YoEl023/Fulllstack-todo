@@ -1,166 +1,100 @@
-<div class="container">
+<div>
   <h1>My Tasks</h1>
-
-
-   <div class="search-container">
-    <mat-form-field appearance="outline" class="search-input">
-      <mat-label>Search Tasks</mat-label>
-      <input matInput 
-             placeholder="Enter task name to search..."
-             (keyup)="onSearch($event)">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+  
+  <div class="mb-3">
+    <input type="text" class="form-control" placeholder="Search Tasks..." (keyup)="onSearch($event)">
   </div>
   
-  <app-create-task (taskCreated)="loadTasks()"></app-create-task>
+  <app-create-task (taskCreated)="loadInitialData()"></app-create-task>
 
-  <mat-tab-group animationDuration="0ms">
+  <tabset class="mt-4">
 
-
-    <mat-tab label="To Do">
-      <ng-template matTabContent>
-        <div *ngIf="todoTasks.length === 0; else todoTable" class="empty-state">
-          <p>You have no tasks to do!</p>
+    <tab heading="To Do">
+      <div *ngIf="todoTasks.length === 0; else todoContent" class="text-center p-4 text-muted">
+        <p *ngIf="currentSearchTerm">No 'To Do' tasks found matching "{{ currentSearchTerm }}".</p>
+        <p *ngIf="!currentSearchTerm">You have no tasks to do!</p>
+      </div>
+      <ng-template #todoContent>
+       <app-task-table
+  [tasks]="todoTasks"
+  tableType="todo"
+  [isAdmin]="isAdminUser"
+  [currentPage]="pagination.todo.currentPage"
+  [itemsPerPage]="pagination.todo.itemsPerPage"
+  (complete)="markAsComplete($event)"
+  (saveEdit)="onSaveInlineEdit($event)"
+  (delete)="deleteTask($event)">
+</app-task-table>
+        <div class="d-flex justify-content-center mt-3" *ngIf="pagination.todo.totalItems > pagination.todo.itemsPerPage">
+          <pagination 
+            [totalItems]="pagination.todo.totalItems" 
+            [itemsPerPage]="pagination.todo.itemsPerPage"
+            [(ngModel)]="pagination.todo.currentPage"
+            (pageChanged)="todoPageChanged($event)"
+             [maxSize]="5"
+              [boundaryLinks]="true">
+          </pagination>
         </div>
-        <ng-template #todoTable>
-          <mat-table [dataSource]="todoTasks" class="mat-elevation-z8">
-
-            <ng-container matColumnDef="sno">
-              <mat-header-cell *matHeaderCellDef> S.No </mat-header-cell>
-              <mat-cell *matCellDef="let task; let i = index"> {{ i + 1 }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="taskName">
-              <mat-header-cell *matHeaderCellDef> Task Name </mat-header-cell>
-              <mat-cell *matCellDef="let task"> {{ task.taskName }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="username">
-              <mat-header-cell *matHeaderCellDef> Assigned To </mat-header-cell>
-              <mat-cell *matCellDef="let task"> {{ task.user?.userName }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="status">
-              <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-              <mat-cell *matCellDef="let task"> To Do </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-              <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-              <mat-cell *matCellDef="let task">
-                <button mat-icon-button color="accent" (click)="markAsComplete(task.taskID)" aria-label="Mark task as complete">
-                  <mat-icon>check_circle</mat-icon>
-                </button>
-                <button mat-icon-button color="primary" (click)="openEditDialog(task)" aria-label="Edit task">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteTask(task.taskID)" aria-label="Delete task">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </mat-cell>
-            </ng-container>
-
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-          </mat-table>
-        </ng-template>
       </ng-template>
-    </mat-tab>
+    </tab>
 
-    <mat-tab label="Completed">
-      <ng-template matTabContent>
-        <div *ngIf="completedTasks.length === 0; else completedTable" class="empty-state">
-          <p>You have no completed tasks.</p>
+    <tab heading="Completed">
+        <div *ngIf="completedTasks.length === 0; else completedContent" class="text-center p-4 text-muted">
+        <p *ngIf="currentSearchTerm">No 'CompletedTask' tasks found matching "{{ currentSearchTerm }}".</p>
+        <p *ngIf="!currentSearchTerm">You have no completed tasks!</p>    
+      </div>
+      <ng-template #completedContent>
+        <app-task-table
+          [tasks]="completedTasks"
+          tableType="completed"
+          [isAdmin]="isAdminUser"
+          [currentPage]="pagination.completed.currentPage"
+          [itemsPerPage]="pagination.completed.itemsPerPage"
+          (revert)="revertToDo($event)"
+          (delete)="deleteTask($event)">
+        </app-task-table>
+        <div class="d-flex justify-content-center mt-3" *ngIf="pagination.completed.totalItems > pagination.completed.itemsPerPage">
+          <pagination 
+            [totalItems]="pagination.completed.totalItems" 
+            [itemsPerPage]="pagination.completed.itemsPerPage"
+            [(ngModel)]="pagination.completed.currentPage"
+            (pageChanged)="completedPageChanged($event)"
+            [maxSize]="5"
+  [boundaryLinks]="true">
+          </pagination>
         </div>
-        <ng-template #completedTable>
-          <mat-table [dataSource]="completedTasks" class="mat-elevation-z8">
-
-            <ng-container matColumnDef="sno">
-              <mat-header-cell *matHeaderCellDef> S.No </mat-header-cell>
-              <mat-cell *matCellDef="let task; let i = index"> {{ i + 1 }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="taskName">
-              <mat-header-cell *matHeaderCellDef> Task Name </mat-header-cell>
-              <mat-cell *matCellDef="let task"> {{ task.taskName }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="username">
-              <mat-header-cell *matHeaderCellDef> Assigned To </mat-header-cell>
-              <mat-cell *matCellDef="let task"> {{ task.user?.userName }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="status">
-              <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-              <mat-cell *matCellDef="let task"> Completed </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-              <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-              <mat-cell *matCellDef="let task">
-                <button mat-icon-button color="accent" (click)="revertToDo(task.taskID)" aria-label="Revert task to To Do">
-                  <mat-icon>undo</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteTask(task.taskID)" aria-label="Delete task">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </mat-cell>
-            </ng-container>
-
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-          </mat-table>
-        </ng-template>
       </ng-template>
-    </mat-tab>
+    </tab>
 
- 
-    <mat-tab label="Deleted" *ngIf="isAdminUser">
-      <ng-template matTabContent>
-        <div *ngIf="deletedTasks.length === 0; else deletedTable" class="empty-state">
-          <p>There are no deleted tasks.</p>
-        </div>
-        <ng-template #deletedTable>
-          <mat-table [dataSource]="deletedTasks" class="mat-elevation-z8">
+    <tab heading="Deleted" *ngIf="isAdminUser">
+      <div *ngIf="deletedTasks.length === 0; else deletedContent" class="text-center p-4 text-muted">
+        <p *ngIf="currentSearchTerm">No 'DeletedTask' tasks found matching "{{ currentSearchTerm }}".</p>
+        <p *ngIf="!currentSearchTerm">You have no deleted tasks!</p>    
+      </div>
+       <ng-template #deletedContent>
+      <app-task-table
+  [tasks]="deletedTasks"
+  tableType="deleted"
+  [isAdmin]="isAdminUser"
+  [currentPage]="pagination.deleted.currentPage"
+  [itemsPerPage]="pagination.deleted.itemsPerPage"
+  (restore)="restoreTask($event)">
+</app-task-table>
 
-            <ng-container matColumnDef="sno">
-              <mat-header-cell *matHeaderCellDef> S.No </mat-header-cell>
-              <mat-cell *matCellDef="let task; let i = index"> {{ i + 1 }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="taskName">
-              <mat-header-cell *matHeaderCellDef> Task Name </mat-header-cell>
-              <mat-cell *matCellDef="let task"> {{ task.taskName }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="username">
-              <mat-header-cell *matHeaderCellDef> Assigned To </mat-header-cell>
-              <mat-cell *matCellDef="let task"> {{ task.user?.userName }} </mat-cell>
-            </ng-container>
-            
-
-            <ng-container matColumnDef="actions">
-              <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-              <mat-cell *matCellDef="let task">
-                <button mat-icon-button color="accent" (click)="restoreTask(task.taskID)" aria-label="Restore task">
-                  <mat-icon>restore_from_trash</mat-icon>
-                </button>
-              </mat-cell>
-            </ng-container>
-
-            <mat-header-row *matHeaderRowDef="deletedDisplayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: deletedDisplayedColumns;"></mat-row>
-          </mat-table>
-        </ng-template>
-      </ng-template>
-    </mat-tab>
-  </mat-tab-group>
+<div class="d-flex justify-content-center mt-3"
+     *ngIf="pagination.deleted.totalItems > pagination.deleted.itemsPerPage">
+  <pagination
+    [totalItems]="pagination.deleted.totalItems"
+    [itemsPerPage]="pagination.deleted.itemsPerPage"
+    [(ngModel)]="pagination.deleted.currentPage"
+    (pageChanged)="deletedPageChanged($event)"
+    [maxSize]="5"
+    [boundaryLinks]="true">
+  </pagination>
 </div>
 
-<style>
-  .empty-state {
-    padding: 24px;
-    text-align: center;
-    color: grey;
-  }
-</style>
+       </ng-template>
+    </tab>
+  </tabset>
+</div>
+
