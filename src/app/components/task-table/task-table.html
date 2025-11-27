@@ -1,7 +1,7 @@
 <table class="table table-striped table-hover mt-3 align-middle">
   <thead>
     <tr>
-      <th scope="col">#</th>
+      <th scope="col">S. No.</th>
  <th scope="col" (click)="onSortByName()" class="sortable">
       Task Name
       <span *ngIf="sortDirection === 'asc'">▲</span>
@@ -9,7 +9,7 @@
     </th>     
      <th scope="col" *ngIf="isAdmin">Task User</th>
       <th scope="col" *ngIf="tableType !== 'deleted'">Status</th>
-      <th scope="col" class="text-end">Actions</th>
+      <th scope="col" class="text-center">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -36,7 +36,7 @@
         <span *ngIf="task.statusID === 2" class="badge bg-success">Completed</span>
       </td>
 
-      <td class="text-end" [ngSwitch]="tableType">
+<td class="text-end text-nowrap" [ngSwitch]="tableType">
         
         <ng-container *ngSwitchCase="'todo'">
         <ng-container *ngIf="editingTaskId === task.taskID; else viewTodoActions">

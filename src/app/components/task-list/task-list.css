@@ -2,7 +2,7 @@
   padding: 24px;
 }
 
-.mat-table {
+/* .mat-table {
   width: 100%;
 }
 
@@ -12,4 +12,154 @@
 
 .search-input {
   width: 100%;
+} */
+
+
+
+.pagination-container {
+  margin-top: auto; 
+  padding-top: 7vh;
+  display: flex;
+  justify-content: center;
 }
+
+/* .tasks-page {
+  animation: pageFadeUp 0.5s ease-out;
+}
+
+@keyframes pageFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} */
+
+
+.tasks-page {
+  position: relative;
+}
+
+.loader-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.search-input {
+  width: 750px;
+}
+
+
+.header-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.header-row .header-left,
+.header-row .header-right {
+  flex: 1 1 0;
+  min-width: 0; 
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.header-right .search-input {
+  width: 85%;      
+  max-width: 380px; 
+  min-width: 140px;
+}
+
+.table-wrapper {
+  position: relative; 
+  padding-top: 8px;  
+}
+
+.table-wrapper .loader-overlay {
+  position: absolute;
+  inset: 0; 
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.table-wrapper.loading table,
+.table-wrapper.loading .tab-content {
+  opacity: 0.7;
+}
+
+.table {
+  width: 100% !important;
+  table-layout: fixed;
+  word-break: break-word;
+}
+
+@media (max-width: 576px) {
+  .header-row {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .header-right .search-input {
+    width: 100%;
+  }
+}
+
+.tab-animate {
+  animation: fadeSlideUp 420ms cubic-bezier(.22,.9,.37,1);
+  will-change: transform, opacity;
+}
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(.996);
+    filter: blur(1px);
+  }
+  60% {
+    opacity: .7;
+    transform: translateY(6px) scale(.998);
+    filter: none;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-form .form-control {
+  height: 48px;            
+  font-size: 1.05rem;      
+  padding: 10px 14px;      
+}
+
+.login-form .input-group .form-control {
+  height: 48px;
+}
+
+.login-form .input-group .btn {
+  height: 48px;
+  padding: 0 14px;
+}
+

@@ -31,7 +31,7 @@ toggleConfirmPassword(): void {
 
   ngOnInit(): void {
     this.authForm = this.fb.group({
-      userName: ['', Validators.required],
+      userName: ['', [Validators.required, Validators.pattern(/^(?!\s)(?!.*\s$).+$/)]],
       passwordHash: ['', [Validators.required, Validators.minLength(6), Validators.pattern(/^(?!\s)(?!.*\s$).+$/)] ]
     });
 
@@ -44,6 +44,11 @@ toggleConfirmPassword(): void {
       this.authForm.addControl('address', this.fb.control('', [Validators.maxLength(250)])); 
       this.authForm.setValidators(passwordMatchValidator());
     }
+
+    this.authForm.get('userName')?.valueChanges.subscribe(value => {
+  this.authForm.get('userName')?.setValue(value.trim(), { emitEvent: false });
+});
+
   }
 
  onSubmit(): void {

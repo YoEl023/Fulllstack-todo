@@ -17,6 +17,8 @@ import { NotificationService } from '../../services/notification';
 export class CreateTask implements OnInit {
   @Output() taskCreated = new EventEmitter<void>();
   createTaskForm!: FormGroup;
+  createTaskFormSubmitted = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -31,6 +33,7 @@ export class CreateTask implements OnInit {
   }
 
   onSubmit(): void {
+      this.createTaskFormSubmitted = true;
     if (this.createTaskForm.valid) {
       this.taskService.createTask(this.createTaskForm.value).subscribe({
         next: (newTask) => {

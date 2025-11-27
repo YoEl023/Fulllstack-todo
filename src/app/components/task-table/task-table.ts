@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Task } from '../../models/task.model';
@@ -9,7 +9,15 @@ import { Task } from '../../models/task.model';
   templateUrl: './task-table.html',
   styleUrl: './task-table.css'
 })
-export class TaskTable {
+export class TaskTable implements OnChanges {
+
+  ngOnChanges(changes: SimpleChanges): void {
+  if (changes['tasks'] && this.tasks && this.tasks.length > 0) {
+    this.sortDirection = 'asc';  
+    this.onSortByName();
+  }
+}
+
   @Input() tasks: Task[] = [];
   @Input() tableType: 'todo' | 'completed' | 'deleted' = 'todo';
   @Input() isAdmin: boolean = false;
