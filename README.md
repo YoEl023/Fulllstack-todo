@@ -57,3 +57,16 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+ToDo list is a web application to save daily tasks in order not to miss anything.
+
+Features
+Register as a user - with mandatory details like username, password and mail id and other optional details like mobile number, DOB and address etc...
+Login as a user using ur login credentials - username and password
+Create/Add new task
+Mark task as completed / Todo
+Edit task
+Delete tasks from both todo and complted list - its a soft delete which can be accessed by user and can be retreived when accidently done
+
+Technologies used:
+Angular for FE.
