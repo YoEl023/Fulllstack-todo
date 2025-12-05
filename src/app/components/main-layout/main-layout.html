@@ -2,16 +2,12 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="#">MyTasksApp </a>
 
-    <div class="ms-auto d-flex align-items-center">
-      
-      <span class="navbar-text text-white me-3" *ngIf="username">
-        Welcome, {{ username }}
-      </span>
+    <div class="ms-auto">
+      <span class="text-white me-3" *ngIf="username"> Welcome, {{ username }} </span>
 
       <button class="btn btn-outline-light" (click)="logout()" title="Logout" *ngIf="username">
         Logout
       </button>
-
     </div>
   </div>
 </nav>

@@ -1,0 +1,33 @@
+.create-task-form {
+  margin-bottom: 1.5rem;
+  width: 50%;
+}
+
+.create-task-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.task-input {
+  padding: 8px;
+  width: 90%;
+  height: 40px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  /* font-size: 1rem; */
+}
+
+.add-task-button {
+  padding: 6px;
+  background-color: #0d6efd;
+  color: white;
+  margin-top: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 40px;
+  width: 90px;
+  /* font-weight: bold; */
+  /* font-size: 1rem; */
+}

@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { Login } from './auth/login/login';
+import { Page } from './components/Pages/page';
+
 import { Register } from './auth/register/register';
 import { MainLayout } from './components/main-layout/main-layout';
 import { TaskList } from './components/task-list/task-list';
@@ -14,7 +16,7 @@ export const routes: Routes = [
       { path: 'login', component: Login, canActivate: [loginGuard] },
   { path: 'register', component: Register, canActivate: [loginGuard] }, 
       { path: 'tasks', component: TaskList, canActivate: [authGuard] },
-
+{ path: 'page', component: Page },
       { 
     path: '**', 
     canActivate: [notFoundRedirectGuard], component: NotFound 

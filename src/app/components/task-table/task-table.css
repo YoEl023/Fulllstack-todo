@@ -1,24 +1,18 @@
-th.sortable {
-  cursor: pointer;
-  user-select: none;
-}
-
-th.sortable span {
-  font-size: 0.75rem;
-  margin-left: 4px;
-}
-
-table {
+.tasks-table {
   width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 1rem;
 }
 
-/* .table tbody tr {
-  transition: background-color 0.15s ease, transform 0.1s ease;
+.tasks-table th,
+.tasks-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #dee2e6;
+  text-align: center;
+  vertical-align: middle;
 }
 
-.table tbody tr:hover {
-  background-color: #f3f4ff;   
-  transform: translateY(-1px); 
-} */
-
-
+.sortable {
+  cursor: default;
+}

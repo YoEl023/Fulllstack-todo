@@ -1,164 +1,176 @@
-<div class="tasks-page card shadow-sm position-relative">
-  <div class="card-body">
+<div>
+  <div class="header-row d-flex justify-content-between align-items-center">
+    <h1 class="title">My Tasks</h1>
 
-    <div class="header-row d-flex mb-3 justify-content-between align-items-center">
-      <h1 class="mb-3">My Tasks</h1>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search tasks..."
+      (keyup)="onSearch($event)"
+    />
+  </div>
 
-      <input
-        type="text"
-        class="form-control search-input"
-        placeholder="Search tasks..."
-        (keyup)="onSearch($event)"
-      />
-    </div>
+  <app-create-task (taskCreated)="loadInitialData()"></app-create-task>
 
-    <app-create-task (taskCreated)="loadInitialData()"></app-create-task>
+  <div>
+    <ul class="tabs-list d-flex justify-content-center">
+      <li class="tab-item">
+        <a
+          class="tab-link"
+          [class.active]="activeTab === 'todo'"
+          href="javascript:void(0)"
+          (click)="onTabSelect('todo')"
+        >
+          To Do
+        </a>
+      </li>
 
-    <div class="custom-tabs mt-4">
+      <li class="tab-item">
+        <a
+          class="tab-link"
+          [class.active]="activeTab === 'completed'"
+          href="javascript:void(0)"
+          (click)="onTabSelect('completed')"
+        >
+          Completed
+        </a>
+      </li>
 
-      <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link"
-             [class.active]="activeTab === 'todo'"
-             href="javascript:void(0)"
-             (click)="onTabSelect('todo')">
-            To Do
-          </a>
-        </li>
+      <li class="tab-item" *ngIf="isAdminUser">
+        <a
+          class="tab-link"
+          [class.active]="activeTab === 'deleted'"
+          href="javascript:void(0)"
+          (click)="onTabSelect('deleted')"
+        >
+          Deleted
+        </a>
+      </li>
+    </ul>
 
-        <li class="nav-item">
-          <a class="nav-link"
-             [class.active]="activeTab === 'completed'"
-             href="javascript:void(0)"
-             (click)="onTabSelect('completed')">
-            Completed
-          </a>
-        </li>
+    <div class="tab-content table-wrapper">
+      <div class="load" *ngIf="isLoading">
+        <div class="spinner-border text-primary">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
 
-        <li class="nav-item" *ngIf="isAdminUser">
-          <a class="nav-link"
-             [class.active]="activeTab === 'deleted'"
-             href="javascript:void(0)"
-             (click)="onTabSelect('deleted')">
-            Deleted
-          </a>
-        </li>
-      </ul>
-
-
-      <div class="tab-content table-wrapper position-relative mt-3">
-
-        <div class="loader-overlay" *ngIf="isLoading">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+      <div *ngIf="activeTab === 'todo'" [class.tab-animate]="tabAnimating">
+        <div *ngIf="todoTasks.length === 0; else todoContent" class="text-center p-4 text-muted">
+          <p *ngIf="currentSearchTerm">
+            No 'To Do' tasks found matching "{{ currentSearchTerm }}".
+          </p>
+          <p *ngIf="!currentSearchTerm">Tasks!</p>
         </div>
 
+        <ng-template #todoContent>
+          <app-task-table
+            [tasks]="todoTasks"
+            tableType="todo"
+            [isAdmin]="isAdminUser"
+            [currentPage]="pagination.todo.currentPage"
+            [itemsPerPage]="pagination.todo.itemsPerPage"
+            (complete)="markAsComplete($event)"
+            (saveEdit)="onSaveInlineEdit($event)"
+            (delete)="deleteTask($event)"
+          >
+          </app-task-table>
 
-        <div *ngIf="activeTab === 'todo'" [class.tab-animate]="tabAnimating">
-
-          <div *ngIf="todoTasks.length === 0; else todoContent" class="text-center p-4 text-muted">
-            <p *ngIf="currentSearchTerm">No 'To Do' tasks found matching "{{ currentSearchTerm }}".</p>
-            <p *ngIf="!currentSearchTerm">Tasks!</p>
-          </div>
-
-          <ng-template #todoContent>
-            <app-task-table
-              [tasks]="todoTasks"
-              tableType="todo"
-              [isAdmin]="isAdminUser"
-              [currentPage]="pagination.todo.currentPage"
+          <div
+            class="pagination-container"
+            *ngIf="pagination.todo.totalItems > pagination.todo.itemsPerPage"
+          >
+            <pagination
+              [totalItems]="pagination.todo.totalItems"
               [itemsPerPage]="pagination.todo.itemsPerPage"
-              (complete)="markAsComplete($event)"
-              (saveEdit)="onSaveInlineEdit($event)"
-              (delete)="deleteTask($event)">
-            </app-task-table>
+              [(ngModel)]="pagination.todo.currentPage"
+              (pageChanged)="todoPageChanged($event)"
+              [maxSize]="5"
+              [boundaryLinks]="true"
+            >
+            </pagination>
+          </div>
+        </ng-template>
+      </div>
 
-            <div class="pagination-container"
-                 *ngIf="pagination.todo.totalItems > pagination.todo.itemsPerPage">
-              <pagination 
-                [totalItems]="pagination.todo.totalItems" 
-                [itemsPerPage]="pagination.todo.itemsPerPage"
-                [(ngModel)]="pagination.todo.currentPage"
-                (pageChanged)="todoPageChanged($event)"
-                [maxSize]="5"
-                [boundaryLinks]="true">
-              </pagination>
-            </div>
-          </ng-template>
-
+      <div *ngIf="activeTab === 'completed'" [class.tab-animate]="tabAnimating">
+        <div
+          *ngIf="completedTasks.length === 0; else completedContent"
+          class="text-center p-4 text-muted"
+        >
+          <p *ngIf="currentSearchTerm">
+            No 'Completed' tasks found matching "{{ currentSearchTerm }}".
+          </p>
+          <p *ngIf="!currentSearchTerm">You have no completed tasks!</p>
         </div>
 
+        <ng-template #completedContent>
+          <app-task-table
+            [tasks]="completedTasks"
+            tableType="completed"
+            [isAdmin]="isAdminUser"
+            [currentPage]="pagination.completed.currentPage"
+            [itemsPerPage]="pagination.completed.itemsPerPage"
+            (revert)="revertToDo($event)"
+            (delete)="deleteTask($event)"
+          >
+          </app-task-table>
 
-  
-        <div *ngIf="activeTab === 'completed'" [class.tab-animate]="tabAnimating">
-
-          <div *ngIf="completedTasks.length === 0; else completedContent" class="text-center p-4 text-muted">
-            <p *ngIf="currentSearchTerm">No 'Completed' tasks found matching "{{ currentSearchTerm }}".</p>
-            <p *ngIf="!currentSearchTerm">You have no completed tasks!</p>
-          </div>
-
-          <ng-template #completedContent>
-            <app-task-table
-              [tasks]="completedTasks"
-              tableType="completed"
-              [isAdmin]="isAdminUser"
-              [currentPage]="pagination.completed.currentPage"
+          <div
+            class="pagination-container"
+            *ngIf="pagination.completed.totalItems > pagination.completed.itemsPerPage"
+          >
+            <pagination
+              [totalItems]="pagination.completed.totalItems"
               [itemsPerPage]="pagination.completed.itemsPerPage"
-              (revert)="revertToDo($event)"
-              (delete)="deleteTask($event)">
-            </app-task-table>
-
-            <div class="pagination-container"
-                 *ngIf="pagination.completed.totalItems > pagination.completed.itemsPerPage">
-              <pagination 
-                [totalItems]="pagination.completed.totalItems" 
-                [itemsPerPage]="pagination.completed.itemsPerPage"
-                [(ngModel)]="pagination.completed.currentPage"
-                (pageChanged)="completedPageChanged($event)"
-                [maxSize]="5"
-                [boundaryLinks]="true">
-              </pagination>
-            </div>
-          </ng-template>
-
-        </div>
-
-
-        <div *ngIf="activeTab === 'deleted'" [class.tab-animate]="tabAnimating">
-
-          <div *ngIf="deletedTasks.length === 0; else deletedContent" class="text-center p-4 text-muted">
-            <p *ngIf="currentSearchTerm">No 'Deleted' tasks found matching "{{ currentSearchTerm }}".</p>
-            <p *ngIf="!currentSearchTerm">You have no deleted tasks!</p>
+              [(ngModel)]="pagination.completed.currentPage"
+              (pageChanged)="completedPageChanged($event)"
+              [maxSize]="5"
+              [boundaryLinks]="true"
+            >
+            </pagination>
           </div>
+        </ng-template>
+      </div>
 
-          <ng-template #deletedContent>
-            <app-task-table
-              [tasks]="deletedTasks"
-              tableType="deleted"
-              [isAdmin]="isAdminUser"
-              [currentPage]="pagination.deleted.currentPage"
-              [itemsPerPage]="pagination.deleted.itemsPerPage"
-              (restore)="restoreTask($event)">
-            </app-task-table>
-
-            <div class="pagination-container"
-                 *ngIf="pagination.deleted.totalItems > pagination.deleted.itemsPerPage">
-              <pagination
-                [totalItems]="pagination.deleted.totalItems"
-                [itemsPerPage]="pagination.deleted.itemsPerPage"
-                [(ngModel)]="pagination.deleted.currentPage"
-                (pageChanged)="deletedPageChanged($event)"
-                [maxSize]="5"
-                [boundaryLinks]="true">
-              </pagination>
-            </div>
-          </ng-template>
-
+      <div *ngIf="activeTab === 'deleted'" [class.tab-animate]="tabAnimating">
+        <div
+          *ngIf="deletedTasks.length === 0; else deletedContent"
+          class="text-center p-4 text-muted"
+        >
+          <p *ngIf="currentSearchTerm">
+            No 'Deleted' tasks found matching "{{ currentSearchTerm }}".
+          </p>
+          <p *ngIf="!currentSearchTerm">You have no deleted tasks!</p>
         </div>
 
-      </div> 
-    </div> 
+        <ng-template #deletedContent>
+          <app-task-table
+            [tasks]="deletedTasks"
+            tableType="deleted"
+            [isAdmin]="isAdminUser"
+            [currentPage]="pagination.deleted.currentPage"
+            [itemsPerPage]="pagination.deleted.itemsPerPage"
+            (restore)="restoreTask($event)"
+          >
+          </app-task-table>
 
+          <div
+            class="pagination-container"
+            *ngIf="pagination.deleted.totalItems > pagination.deleted.itemsPerPage"
+          >
+            <pagination
+              [totalItems]="pagination.deleted.totalItems"
+              [itemsPerPage]="pagination.deleted.itemsPerPage"
+              [(ngModel)]="pagination.deleted.currentPage"
+              (pageChanged)="deletedPageChanged($event)"
+              [maxSize]="5"
+              [boundaryLinks]="true"
+            >
+            </pagination>
+          </div>
+        </ng-template>
+      </div>
+    </div>
   </div>
 </div>

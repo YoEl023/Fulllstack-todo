@@ -8,33 +8,27 @@ import { jwtDecode } from 'jwt-decode';
   selector: 'app-main-layout',
   imports: [CommonModule, RouterModule],
   templateUrl: './main-layout.html',
-  styleUrl: './main-layout.css'
+  styleUrl: './main-layout.css',
 })
 export class MainLayout implements OnInit {
   username: string = '';
 
-  constructor(
-    private authService: Auth,
-    private router: Router
-  ) {}
+  constructor(private authService: Auth, private router: Router) {}
 
- ngOnInit(): void {
-  
-  this.authService.authState$.subscribe(isLoggedIn => {
-
-    if (isLoggedIn) {
-      const token = this.authService.getToken();
-      if (token) {
-        const decodedToken: any = jwtDecode(token);
-        const nameClaim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
-        this.username = decodedToken[nameClaim] || 'User';
+  ngOnInit(): void {
+    this.authService.authState$.subscribe((isLoggedIn) => {
+      if (isLoggedIn) {
+        const token = this.authService.getToken();
+        if (token) {
+          const decodedToken: any = jwtDecode(token);
+          const nameClaim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
+          this.username = decodedToken[nameClaim] || 'User';
+        }
+      } else {
+        this.username = '';
       }
-    } else {
-      this.username = '';
-    }
-
-  });
-}
+    });
+  }
 
   logout(): void {
     this.authService.logout();

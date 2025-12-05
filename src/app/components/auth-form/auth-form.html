@@ -1,18 +1,12 @@
-<form [formGroup]="authForm"
-      (ngSubmit)="onSubmit()"
-      class="auth-card"
-      [class.login-form]="formType === 'Login'">
-
-      
-  <div class="mb-2 text-muted small">Fields marked <span class="required">*</span> are required</div>
+<form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+  <div class="mb-2 text-muted small">
+    Fields marked <span class="required">*</span> are required
+  </div>
 
   <div class="row g-3">
-
-<div class="col-12" [ngClass]="{ 'col-md-6': formType === 'Register', 'col-md-12': formType === 'Login' }">
+    <div [ngClass]="{ 'col-md-6': formType === 'Register', 'col-md-12': formType === 'Login' }">
       <div class="mb-3">
-        <label for="username" class="form-label">
-          Username <span class="required">*</span>
-        </label>
+        <label for="username" class="form-label"> Username <span class="required">*</span> </label>
         <input
           type="text"
           class="form-control"
@@ -20,7 +14,6 @@
           formControlName="userName"
           maxlength="50"
           required
-          aria-required="true"
         />
         <div *ngIf="authForm.get('userName')?.hasError('pattern')" class="form-text text-danger">
           Enter a valid user name.
@@ -28,9 +21,7 @@
       </div>
 
       <div class="mb-3">
-        <label for="password" class="form-label">
-          Password <span class="required">*</span>
-        </label>
+        <label for="password" class="form-label"> Password <span class="required">*</span> </label>
 
         <div class="input-group">
           <input
@@ -40,7 +31,6 @@
             formControlName="passwordHash"
             maxlength="50"
             required
-            aria-required="true"
           />
 
           <button
@@ -48,16 +38,21 @@
             class="btn btn-outline-secondary"
             (click)="togglePassword()"
             tabindex="-1"
-            aria-label="Toggle password visibility"
           >
             <i [class]="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
           </button>
         </div>
 
-        <div *ngIf="authForm.get('passwordHash')?.hasError('minlength')" class="form-text text-danger">
+        <div
+          *ngIf="authForm.get('passwordHash')?.hasError('minlength')"
+          class="form-text text-danger"
+        >
           Password must be at least 6 characters.
         </div>
-        <div *ngIf="authForm.get('passwordHash')?.hasError('pattern')" class="form-text text-danger">
+        <div
+          *ngIf="authForm.get('passwordHash')?.hasError('pattern')"
+          class="form-text text-danger"
+        >
           Password cannot start/end with spaces
         </div>
       </div>
@@ -75,41 +70,44 @@
             formControlName="confirmPassword"
             maxlength="50"
             [attr.required]="formType === 'Register' ? true : null"
-            aria-required="{{ formType === 'Register' ? 'true' : 'false' }}"
           />
           <button
             type="button"
             class="btn btn-outline-secondary"
             (click)="toggleConfirmPassword()"
             tabindex="-1"
-            aria-label="Toggle confirm password visibility"
           >
             <i [class]="showConfirmPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
           </button>
         </div>
 
-        <div *ngIf="authForm.hasError('passwordMismatch') && authForm.get('confirmPassword')?.touched" class="form-text text-danger">
+        <div
+          *ngIf="authForm.hasError('passwordMismatch') && authForm.get('confirmPassword')?.touched"
+          class="form-text text-danger"
+        >
           Passwords do not match.
         </div>
       </div>
 
       <div *ngIf="formType === 'Register'" class="mb-3">
-          <label for="email" class="form-label">
-            Email <span class="required">*</span>
-          </label>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            formControlName="email"
-            [attr.required]="formType === 'Register' ? true : null"
-            aria-required="{{ formType === 'Register' ? 'true' : 'false' }}"
-          />
-          <div *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched" class="form-text text-danger">
-            <div *ngIf="authForm.get('email')?.hasError('required')">Email is required.</div>
-            <div *ngIf="authForm.get('email')?.hasError('pattern')">Please enter a valid email address ending in .com.</div>
+        <label for="email" class="form-label"> Email <span class="required">*</span> </label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          formControlName="email"
+          [attr.required]="formType === 'Register' ? true : null"
+        />
+        <div
+          *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched"
+          class="form-text text-danger"
+        >
+          <div *ngIf="authForm.get('email')?.hasError('required')">Email is required.</div>
+          <div *ngIf="authForm.get('email')?.hasError('pattern')">
+            Please enter a valid email address ending in .com.
           </div>
         </div>
+      </div>
 
       <div *ngIf="formType === 'Login'" class="mt-2">
         <div class="d-grid">
@@ -117,17 +115,11 @@
             {{ formType }}
           </button>
         </div>
-
       </div>
-    </div> 
+    </div>
 
-
-<div *ngIf="formType === 'Register'" class="col-12 col-md-6">
-
+    <div *ngIf="formType === 'Register'" class="col-12 col-md-6">
       <ng-container *ngIf="formType === 'Register'">
-
-       
-
         <div class="mb-3">
           <label for="contactNumber" class="form-label">Contact Number (Optional)</label>
           <input
@@ -138,7 +130,10 @@
             max="9999999999"
             placeholder="10-digit (optional)"
           />
-          <div *ngIf="authForm.get('contactNumber')?.hasError('pattern')" class="form-text text-danger">
+          <div
+            *ngIf="authForm.get('contactNumber')?.hasError('pattern')"
+            class="form-text text-danger"
+          >
             Must be a 10-digit number.
           </div>
         </div>
@@ -167,23 +162,24 @@
 
         <div class="mb-3">
           <label for="address" class="form-label">Address (Optional)</label>
-          <textarea id="address" class="form-control" formControlName="address" rows="3" maxlength="250"></textarea>
+          <textarea
+            id="address"
+            class="form-control"
+            formControlName="address"
+            rows="3"
+            maxlength="250"
+          ></textarea>
           <div class="form-text text-end">
             {{ authForm.get('address')?.value?.length || 0 }} / 250
           </div>
         </div>
-
       </ng-container>
+    </div>
+  </div>
 
-
-
-    </div> 
-  </div> 
-
-  <div *ngIf="formType === 'Register'" class="d-grid mt-4">
+  <div *ngIf="formType === 'Register'" class="d-grid">
     <button type="submit" class="btn btn-primary" [disabled]="authForm.invalid">
       {{ formType }}
     </button>
   </div>
-
 </form>
